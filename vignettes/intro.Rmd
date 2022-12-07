@@ -1,0 +1,425 @@
+---
+title: "Introduction to StatComp22092"
+author: "Wei Feng"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to StatComp22092}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Overview
+
+__StatComp22092__ is a R package developed to compare the performance of four sorting algorithms.
+_bubbleSort_ is bubble sort algorithm; _selectSort_ is selection sort algorithm; _insertSort_ is insert sort algorithm; _quickSort_ is quick sort algorithm.These functions are written using R. _bubbleSortCpp_ is also  bubble sort algorithm , but it is written using C++. _swap_ is used to exchange two numbers in an array. 
+In addition, __StatComp22092__ also  implements neural network algorithm . First, three activation functions and their derivatives are realized. _sigmoidFun_ is sigmoid function $\frac{1}{1+e^{-x}}$ , _sigmoidDerivate_ is its derivative $\frac{e^{-x}}{(1+e^{-x})^2}$ . _reluFun_ is Relu function $max(x,0)$ , _reluDerivate_ is its derivative $I(x>0)$ . _tanhDerivate_ is the derivative function of tanh $1-tanh^2(x)$. _myNerualNet_  realizes the construction of fully connected neural network. _training_ is training the network with training sets . _predict_ is to use the network predict a  single sample. _predictMat_ can predict  multiple samples at the same time. 
+
+
+The R package 'microbenchmark' can be used to benchmark the above R and C++ functions.
+The R package 'neuralnet' can  build another neural network for comparison . 
+
+
+The source R code for _swap_ is as follows:
+```{r}
+#Swap elements at i and j positions in an array
+swap <- function(arr,i,j){
+  temp <- arr[i]
+  arr[i] <- arr[j]
+  arr[j] <- temp
+  return(arr)
+}
+```
+
+
+
+The source R code for _bubbleSort_ is as follows:
+```{r}
+#bubble sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.
+bubbleSort <- function(arr,reverse=FALSE){
+  if(length(arr)<2){
+    return(arr)
+  }
+  if(reverse==FALSE){
+    for (i in length(arr):2){
+      for (j in 1:(i-1)) {
+        if(arr[j]>arr[j+1]){ #Compare two adjacent numbers in turn
+          arr = swap(arr,j,j+1)
+        }
+      }
+    }
+  }else{
+    for (i in length(arr):2){
+      for (j in 1:(i-1)) {
+        if(arr[j]<arr[j+1]){
+          arr = swap(arr,j,j+1)
+        }
+      }
+    }
+  }
+  return(arr)
+}
+```
+
+_bubbleSort_ return the returns an ordered array.
+
+
+The source R code for _selectSort_ is as follows:
+```{r}
+#select sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.
+selectSort <- function(arr,reverse=FALSE){
+  if(length(arr)<2){
+    return(arr)
+  }
+  if(reverse==FALSE){
+    for (i in 1:(length(arr)-1)) {
+      minIndex <- i  #Starting from the ith position, the position of the smallest element in the array.
+      for (j in (i+1):length(arr)) {
+        if(arr[minIndex]>arr[j]){
+          minIndex <- j 
+        }
+      }
+      arr = swap(arr,i,minIndex)
+    }
+  }else{
+    for (i in 1:(length(arr)-1)) {
+      maxIndex <- i  #Starting from the ith position, the position of the largest element in the array
+      for (j in (i+1):length(arr)){
+        if(arr[maxIndex]<arr[j]){
+          maxIndex <- j 
+        }
+      }
+      arr <- swap(arr,i,maxIndex)
+    }
+  }
+  return(arr)
+}
+```
+
+_selectSort_ return the returns an ordered array.
+
+
+The source R code for _insertSort_ is as follows:
+```{r}
+#insert sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.
+insertSort <- function(arr,reverse=FALSE){
+  if(length(arr)<2){
+    return(arr)
+  }
+  if(reverse==FALSE){
+    for (i in 2:length(arr)) {
+      for (j in (i-1):1) {
+        if(arr[j]>arr[j+1]){
+          arr <- swap(arr,j,j+1)
+        }
+      }
+    }
+  }else{
+    for (i in 2:length(arr)) {
+      for (j in (i-1):1) {
+        if(arr[j]<arr[j+1]){
+          arr <- swap(arr,j,j+1)
+        }
+      }
+    }
+  }
+  return(arr)
+}
+```
+
+_insertSort_ return the returns an ordered array.
+
+The source R code for _quickSort_ is as follows:
+```{r}
+#quick sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.
+quickSort<-function(arr,reverse=FALSE){
+  num<-length(arr)
+  if(num==0||num==1){
+    return(arr)
+  }
+  if(reverse==FALSE){
+    a<-arr[1]
+    y<-arr[-1]
+    lower<-y[y<a] # choose which number in the array is smaller than a
+    upper<-y[y>=a] # choose which number in the array is bigger than a
+    return(c(quickSort(lower),a,quickSort(upper)))
+  }else{
+    a<-arr[1]
+    y<-arr[-1]
+    lower<-y[y<a]
+    upper<-y[y>=a]
+    return(c(quickSort(upper,reverse=TRUE),a,quickSort(lower,reverse=TRUE)))
+  }
+}
+```
+
+_quickSort_ return the returns an ordered array.
+
+The source C++ code for _bubbleSortCpp_ is as follows:
+```{r,eval=FALSE}
+#bubble sort , arr is the array to be sorted.
+NumericVector bubbleSortCpp(NumericVector arr){
+  double tem = 0;
+  if(arr.size()<2){
+    return arr;
+  }
+  int n = arr.size();
+  NumericVector cloArr = clone(arr);
+  for(int i = n-1; i>0;i--){
+    for(int j = 0; j < i; j++){
+      if(arr[j]>arr[j+1]){
+        tem = arr[j];
+        arr[j] = arr[j+1];
+        arr[j+1] = tem;
+        cloArr[j] = cloArr[j+1];
+        cloArr[j+1] = tem;
+      }
+    }
+  }
+  return cloArr;
+}
+```
+
+_bubbleSortCpp_ return the returns an ordered array.
+
+
+An example to compare the performance of bubble sort , select sort , merge sort , quick sort.
+```{r}
+library(StatComp22092)
+library(microbenchmark)
+library(Rcpp)
+sourceCpp('../src/StatCompC.cpp')
+dt <- sample(1:100)  #Generate a random sequence of integers
+ts <- microbenchmark(bubble_sort=bubbleSort(dt),insert_sort = insertSort(dt),select_sort = selectSort(dt),quick_sort=quickSort(dt),bubble_sort_cpp=bubbleSortCpp(dt))
+summary(ts)[,c(1,3,5,6)]
+```
+
+From the result we can see that bubble_sort and 
+insert_sort  more slowly  because the time complexity of bubble sort algorithm and insert sort algorithm are $O(N^2)$ . The time complexity of quick sort  algorithm is $O(NlogN)$ , so the sorting speed is faster.In addition, if we rewrite the code with C++, we can see that the bubble sort algorithm is much faster. 
+
+
+
+The source R code for _sigmoidFun_ is as follows:
+```{r}
+#sigmoid function
+sigmoidFun <- function(x){
+ 1/(1+exp(-x)) 
+}
+```
+
+
+The source R code for _sigmoidDerivate_ is as follows:
+```{r}
+#derivative of sigmoid function
+sigmoidDerivate <- function(x){
+ sigmoidFun(x) *(1-sigmoidFun(x)) 
+}
+```
+
+
+The source R code for _reluFun_ is as follows:
+```{r}
+#Relu function
+reluFun <- function(x){
+ max(0,x) 
+}
+```
+
+The source R code for _reluDerivate_ is as follows:
+```{r}
+#derivative of Relu function
+reluDerivate <- function(x){
+   as.numeric(x>0)
+}
+```
+
+
+The source R code for _tanhDerivate_ is as follows:
+```{r}
+#derivative of tanh function
+tanhDerivate <- function(x){
+ 1 - tanh(x)^2
+}
+```
+
+The source R code for _myNerualNet_ is as follows:
+```{r}
+# Construct neural network; layers is an array ,the i-th element in the array represents the number of nodes in the i-th layer of the neural network;activationFun is the activation function.
+myNeuralNet <- function(layers,activationFun){
+  # choose activation function
+  if(activationFun == 'tanh'){
+    activation<- tanh
+    activationDerivate <- tanhDerivate
+  }else if(activationFun == 'sigmoid'){
+    activation <- sigmoidFun
+    activationDerivate <- sigmoidDerivate
+  }else if(activationFun == 'relu'){
+    activation <- reluFun
+    activationDerivate <- reluDerivate
+  }else {
+    return('activation is not support,please choose tanh,relu or sigmoid')
+  }
+
+  initialWeights <- list()
+  length(initialWeights) <- length(layers)-1
+  
+  for (i in 1:(length(layers)-2)) {
+    rows <- layers[i]+1
+    cols <- layers[i+1]+1
+    
+    initialWeights[[i]]<- matrix(nrow = rows,ncol = cols,rnorm(rows*cols))  # Initialize Network  Weights
+  }
+  
+  lastRow <- layers[length(initialWeights)]+1
+  lastCol <- layers[length(initialWeights)+1]
+  initialWeights[[length(initialWeights)]] <- matrix(nrow = lastRow,ncol = lastCol,rnorm(lastCol*lastRow))
+  
+  return(initialWeights) 
+}
+```
+
+
+The source R code for _training_ is as follows:
+```{r}
+#x is the training set; y is label;epochs indicate how many times to run the data.
+training <- function(x,y,learningRate,initialWeights,activationFun,epochs=100){
+  if(activationFun == 'tanh'){
+    activation<- tanh
+    activationDerivate <- tanhDerivate
+  }else if(activationFun == 'sigmoid'){
+    activation <- sigmoidFun
+    activationDerivate <- sigmoidDerivate
+  }else if(activationFun == 'relu'){
+    activation <- reluFun
+    activationDerivate <- reluDerivate
+  }else {
+    return('activation is not support,please choose tanh,relu or sigmoid')
+  }
+  initialweights <- initialWeights
+  x <- as.matrix(cbind(1,x))
+  for (i in 1:epochs) {
+    samples <- sample(1:length(x[,1]),1) #Randomly select a sample for training
+    compWeights <- list(x[samples,])
+    length(compWeights) <-length(initialweights)
+    
+    #Calculate Predicted Value
+    for (j in 1:length(initialweights)) {
+      values <- compWeights[[j]] %*% initialweights[[j]]
+      compWeights[[j+1]]<-activation(values)
+    }
+    error <- y[samples,] - compWeights[[length(compWeights)]] #Calculate the error 
+    gradient <- list(error* activationDerivate(compWeights[[length(compWeights)]])) #Calculate the  gradient 
+    for (k in (length(compWeights)-1):2) {
+      length(gradient) <- length(gradient) + 1
+      gradient[[length(gradient)]] <- gradient[[length(gradient)-1]]%*%t(initialweights[[k]])*activationDerivate(compWeights[[k]])
+    }
+    
+    gradientReverse <- list()
+    length(gradientReverse) <- length(gradient)
+    for (m in 1:length(gradient)) {
+      gradientReverse[[m]] <- gradient[[(length(gradient))-m+1]]
+    }
+    # Update  network weights
+    for (s in 1:length(initialweights)) {
+      layerWeight <- as.numeric(compWeights[[s]])
+      gradient <- gradientReverse[[s]]
+      initialweights[[s]]<- initialweights[[s]] + learningRate*(layerWeight%*%gradient)
+    }
+  }
+  print(initialweights)
+  return(initialweights)
+}
+```
+
+The source R code for _prediction_ is as follows
+```{r}
+# x is the sample ;fitWeights is the trained weight.
+prediction <- function(x,fitWeights,activationFun){
+  if(activationFun == 'tanh'){
+    activation<- tanh
+  }else if(activationFun == 'sigmoid'){
+    activation <- sigmoidFun
+  }else if(activationFun == 'relu'){
+    activation <- reluFun
+  }else {
+    return('activation is not support,please choose tanh,relu or sigmoid')
+  }
+  for (i in 1:length(fitWeights)) {
+    dotValues <- x%*%fitWeights[[i]]
+    x <- activation(dotValues)
+  }
+  return(x)
+}
+
+predictionMat <- function(x,fitWeights,activationFun){
+  if(activationFun == 'tanh'){
+    activation<- tanh
+  }else if(activationFun == 'sigmoid'){
+    activation <- sigmoidFun
+  }else if(activationFun == 'relu'){
+    activation <- reluFun
+  }else {
+    return('activation is not support,please choose tanh,relu or sigmoid')
+  }
+  newX <- cbind(1,x)
+  predictValues <- apply(newX, 1,function(x)prediction(x,fitWeights,activationFun))
+  print(predictValues)
+}
+```
+
+
+Prepare training set and test set:
+```{r}
+# use the data Boston from MASS to make a presentation.
+library(MASS)
+samplesSelect<-sample(c(1:length(Boston[,1])),length(Boston[,1])*0.7)
+
+#Divide training set and test set
+trainData<-Boston[samplesSelect,]
+testData<-Boston[-samplesSelect,]
+
+# medv is the label,  the house price to be predicted
+trainX<-trainData[-which(colnames(Boston)=="medv")]
+trainY<-trainData[which(colnames(Boston)=="medv")]
+
+testX<-testData[-which(colnames(Boston)=="medv")]
+testY<-testData[which(colnames(Boston)=="medv")]
+
+#Normalize the data
+trainX<-apply(trainX,2,function(x)scale(x,center=T,scale=T))
+trainY<-scale(trainY,center=T,scale=T)
+testX<-apply(testX,2,function(x)scale(x,center=T,scale=T))
+testY<-scale(testY,center=T,scale=T)
+```
+
+Construct neural network , then train on the training set . Finally, predict on the test set.
+```{r}
+initialWeights <- myNeuralNet(c(13,6,3,2,1),'tanh')
+fitWeights<-training(trainX,trainY,0.001,initialWeights,'tanh',20000)
+predictValues<-predictionMat(testX,initialWeights,'tanh')
+```
+
+
+```{r}
+trainYOrig<-as.matrix(trainData[which(colnames(Boston)=="medv")])
+testYOrig<-as.matrix(testData[which(colnames(Boston)=="medv")])
+predictValuesMyNet<-predictValues*sd(trainYOrig)+mean(trainYOrig)
+mae<-mean(abs(testYOrig-predictValuesMyNet))
+mae
+```
+
+
+using neuralnet package to construct neural network:
+
+```{r}
+# use neuralnet package as a control
+library(neuralnet)
+network <- neuralnet(medv~crim+zn+indus+chas+nox+rm+age+dis+rad+tax+ptratio+black+lstat,trainData,hidden=4)
+network$weights
+```
+
+
+```{r}
+predictionNeuralnet<-compute(network,testX)
+head(data.frame(testData$medv,predictValuesMyNet,predictionNeuralnet$net.result),40)
+```

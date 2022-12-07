@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Wei Feng" />
+
+<meta name="date" content="2022-12-07" />
+
+<title>Introduction to StatComp22092</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to StatComp22092</h1>
+<h4 class="author">Wei Feng</h4>
+<h4 class="date">2022-12-07</h4>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><strong>StatComp22092</strong> is a R package developed to compare
+the performance of four sorting algorithms. <em>bubbleSort</em> is
+bubble sort algorithm; <em>selectSort</em> is selection sort algorithm;
+<em>insertSort</em> is insert sort algorithm; <em>quickSort</em> is
+quick sort algorithm.These functions are written using R.
+<em>bubbleSortCpp</em> is also bubble sort algorithm , but it is written
+using C++. <em>swap</em> is used to exchange two numbers in an array. In
+addition, <strong>StatComp22092</strong> also implements neural network
+algorithm . First, three activation functions and their derivatives are
+realized. <em>sigmoidFun</em> is sigmoid function <span class="math inline">\(\frac{1}{1+e^{-x}}\)</span> ,
+<em>sigmoidDerivate</em> is its derivative <span class="math inline">\(\frac{e^{-x}}{(1+e^{-x})^2}\)</span> .
+<em>reluFun</em> is Relu function <span class="math inline">\(max(x,0)\)</span> , <em>reluDerivate</em> is its
+derivative <span class="math inline">\(I(x&gt;0)\)</span> .
+<em>tanhDerivate</em> is the derivative function of tanh <span class="math inline">\(1-tanh^2(x)\)</span>. <em>myNerualNet</em>
+realizes the construction of fully connected neural network.
+<em>training</em> is training the network with training sets .
+<em>predict</em> is to use the network predict a single sample.
+<em>predictMat</em> can predict multiple samples at the same time.</p>
+<p>The R package ‘microbenchmark’ can be used to benchmark the above R
+and C++ functions. The R package ‘neuralnet’ can build another neural
+network for comparison .</p>
+<p>The source R code for <em>swap</em> is as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Swap elements at i and j positions in an array</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>swap <span class="ot">&lt;-</span> <span class="cf">function</span>(arr,i,j){</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  temp <span class="ot">&lt;-</span> arr[i]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  arr[i] <span class="ot">&lt;-</span> arr[j]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  arr[j] <span class="ot">&lt;-</span> temp</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(arr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>bubbleSort</em> is as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#bubble sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bubbleSort <span class="ot">&lt;-</span> <span class="cf">function</span>(arr,<span class="at">reverse=</span><span class="cn">FALSE</span>){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(arr)<span class="sc">&lt;</span><span class="dv">2</span>){</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(arr)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(reverse<span class="sc">==</span><span class="cn">FALSE</span>){</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">length</span>(arr)<span class="sc">:</span><span class="dv">2</span>){</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(i<span class="dv">-1</span>)) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(arr[j]<span class="sc">&gt;</span>arr[j<span class="sc">+</span><span class="dv">1</span>]){ <span class="co">#Compare two adjacent numbers in turn</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>          arr <span class="ot">=</span> <span class="fu">swap</span>(arr,j,j<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">length</span>(arr)<span class="sc">:</span><span class="dv">2</span>){</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(i<span class="dv">-1</span>)) {</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(arr[j]<span class="sc">&lt;</span>arr[j<span class="sc">+</span><span class="dv">1</span>]){</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>          arr <span class="ot">=</span> <span class="fu">swap</span>(arr,j,j<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(arr)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><em>bubbleSort</em> return the returns an ordered array.</p>
+<p>The source R code for <em>selectSort</em> is as follows:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>selectSort <span class="ot">&lt;-</span> <span class="cf">function</span>(arr,<span class="at">reverse=</span><span class="cn">FALSE</span>){</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(arr)<span class="sc">&lt;</span><span class="dv">2</span>){</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(arr)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(reverse<span class="sc">==</span><span class="cn">FALSE</span>){</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(arr)<span class="sc">-</span><span class="dv">1</span>)) {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      minIndex <span class="ot">&lt;-</span> i  <span class="co">#Starting from the ith position, the position of the smallest element in the array.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (j <span class="cf">in</span> (i<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">length</span>(arr)) {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(arr[minIndex]<span class="sc">&gt;</span>arr[j]){</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>          minIndex <span class="ot">&lt;-</span> j </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      arr <span class="ot">=</span> <span class="fu">swap</span>(arr,i,minIndex)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(arr)<span class="sc">-</span><span class="dv">1</span>)) {</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      maxIndex <span class="ot">&lt;-</span> i  <span class="co">#Starting from the ith position, the position of the largest element in the array</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (j <span class="cf">in</span> (i<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span><span class="fu">length</span>(arr)){</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(arr[maxIndex]<span class="sc">&lt;</span>arr[j]){</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>          maxIndex <span class="ot">&lt;-</span> j </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>      arr <span class="ot">&lt;-</span> <span class="fu">swap</span>(arr,i,maxIndex)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(arr)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><em>selectSort</em> return the returns an ordered array.</p>
+<p>The source R code for <em>insertSort</em> is as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#insert sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>insertSort <span class="ot">&lt;-</span> <span class="cf">function</span>(arr,<span class="at">reverse=</span><span class="cn">FALSE</span>){</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">length</span>(arr)<span class="sc">&lt;</span><span class="dv">2</span>){</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(arr)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(reverse<span class="sc">==</span><span class="cn">FALSE</span>){</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(arr)) {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (j <span class="cf">in</span> (i<span class="dv">-1</span>)<span class="sc">:</span><span class="dv">1</span>) {</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(arr[j]<span class="sc">&gt;</span>arr[j<span class="sc">+</span><span class="dv">1</span>]){</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>          arr <span class="ot">&lt;-</span> <span class="fu">swap</span>(arr,j,j<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(arr)) {</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (j <span class="cf">in</span> (i<span class="dv">-1</span>)<span class="sc">:</span><span class="dv">1</span>) {</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(arr[j]<span class="sc">&lt;</span>arr[j<span class="sc">+</span><span class="dv">1</span>]){</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>          arr <span class="ot">&lt;-</span> <span class="fu">swap</span>(arr,j,j<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(arr)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><em>insertSort</em> return the returns an ordered array.</p>
+<p>The source R code for <em>quickSort</em> is as follows:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#quick sort , arr is the array to be sorted,reverse indicates whether to sort in ascending or descending order.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>quickSort<span class="ot">&lt;-</span><span class="cf">function</span>(arr,<span class="at">reverse=</span><span class="cn">FALSE</span>){</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  num<span class="ot">&lt;-</span><span class="fu">length</span>(arr)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(num<span class="sc">==</span><span class="dv">0</span><span class="sc">||</span>num<span class="sc">==</span><span class="dv">1</span>){</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(arr)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(reverse<span class="sc">==</span><span class="cn">FALSE</span>){</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    a<span class="ot">&lt;-</span>arr[<span class="dv">1</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    y<span class="ot">&lt;-</span>arr[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    lower<span class="ot">&lt;-</span>y[y<span class="sc">&lt;</span>a] <span class="co"># choose which number in the array is smaller than a</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    upper<span class="ot">&lt;-</span>y[y<span class="sc">&gt;=</span>a] <span class="co"># choose which number in the array is bigger than a</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(<span class="fu">quickSort</span>(lower),a,<span class="fu">quickSort</span>(upper)))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    a<span class="ot">&lt;-</span>arr[<span class="dv">1</span>]</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    y<span class="ot">&lt;-</span>arr[<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    lower<span class="ot">&lt;-</span>y[y<span class="sc">&lt;</span>a]</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    upper<span class="ot">&lt;-</span>y[y<span class="sc">&gt;=</span>a]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(<span class="fu">quickSort</span>(upper,<span class="at">reverse=</span><span class="cn">TRUE</span>),a,<span class="fu">quickSort</span>(lower,<span class="at">reverse=</span><span class="cn">TRUE</span>)))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><em>quickSort</em> return the returns an ordered array.</p>
+<p>The source C++ code for <em>bubbleSortCpp</em> is as follows:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#bubble sort , arr is the array to be sorted.</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>NumericVector <span class="fu">bubbleSortCpp</span>(NumericVector arr){</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  double tem <span class="ot">=</span> <span class="dv">0</span>;</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">arr.size</span>()<span class="sc">&lt;</span><span class="dv">2</span>){</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    return arr;</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  int n <span class="ot">=</span> <span class="fu">arr.size</span>();</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  NumericVector cloArr <span class="ot">=</span> <span class="fu">clone</span>(arr);</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(int <span class="at">i =</span> n<span class="dv">-1</span>; i<span class="sc">&gt;</span><span class="dv">0</span>;i<span class="sc">--</span>){</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(int <span class="at">j =</span> <span class="dv">0</span>; j <span class="sc">&lt;</span> i; j<span class="sc">++</span>){</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(arr[j]<span class="sc">&gt;</span>arr[j<span class="sc">+</span><span class="dv">1</span>]){</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        tem <span class="ot">=</span> arr[j];</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        arr[j] <span class="ot">=</span> arr[j<span class="sc">+</span><span class="dv">1</span>];</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        arr[j<span class="sc">+</span><span class="dv">1</span>] <span class="ot">=</span> tem;</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        cloArr[j] <span class="ot">=</span> cloArr[j<span class="sc">+</span><span class="dv">1</span>];</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        cloArr[j<span class="sc">+</span><span class="dv">1</span>] <span class="ot">=</span> tem;</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  return cloArr;</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><em>bubbleSortCpp</em> return the returns an ordered array.</p>
+<p>An example to compare the performance of bubble sort , select sort ,
+merge sort , quick sort.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(StatComp22092)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;StatComp22092&#39;</code></pre>
+<pre><code>## The following objects are masked _by_ &#39;.GlobalEnv&#39;:
+## 
+##     bubbleSort, insertSort, quickSort, selectSort, swap</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Rcpp)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sourceCpp</span>(<span class="st">&#39;../src/StatCompC.cpp&#39;</span>)</span></code></pre></div>
+<pre><code>## Warning in normalizePath(path.expand(path), winslash, mustWork): path[1]=&quot;E:/R/
+## RStudio/StatComp22092/src/../inst/include&quot;: 系统找不到指定的路径。</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)  <span class="co">#Generate a random sequence of integers</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ts <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(<span class="at">bubble_sort=</span><span class="fu">bubbleSort</span>(dt),<span class="at">insert_sort =</span> <span class="fu">insertSort</span>(dt),<span class="at">select_sort =</span> <span class="fu">selectSort</span>(dt),<span class="at">quick_sort=</span><span class="fu">quickSort</span>(dt),<span class="at">bubble_sort_cpp=</span><span class="fu">bubbleSortCpp</span>(dt))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ts)[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">6</span>)]</span></code></pre></div>
+<pre><code>##              expr       lq    median        uq
+## 1     bubble_sort 3625.450 3684.2010 3943.1505
+## 2     insert_sort 3581.801 3647.0010 3843.0505
+## 3     select_sort  355.551  361.3505  367.5515
+## 4      quick_sort  163.552  174.7510  184.4505
+## 5 bubble_sort_cpp   12.401   15.9005   21.3510</code></pre>
+<p>From the result we can see that bubble_sort and insert_sort more
+slowly because the time complexity of bubble sort algorithm and insert
+sort algorithm are <span class="math inline">\(O(N^2)\)</span> . The
+time complexity of quick sort algorithm is <span class="math inline">\(O(NlogN)\)</span> , so the sorting speed is
+faster.In addition, if we rewrite the code with C++, we can see that the
+bubble sort algorithm is much faster.</p>
+<p>The source R code for <em>sigmoidFun</em> is as follows:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sigmoid function</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sigmoidFun <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>x)) </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>sigmoidDerivate</em> is as follows:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#derivative of sigmoid function</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sigmoidDerivate <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">sigmoidFun</span>(x) <span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span><span class="fu">sigmoidFun</span>(x)) </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>reluFun</em> is as follows:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Relu function</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>reluFun <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">max</span>(<span class="dv">0</span>,x) </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>reluDerivate</em> is as follows:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#derivative of Relu function</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>reluDerivate <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">as.numeric</span>(x<span class="sc">&gt;</span><span class="dv">0</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>tanhDerivate</em> is as follows:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#derivative of tanh function</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tanhDerivate <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">tanh</span>(x)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>myNerualNet</em> is as follows:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct neural network; layers is an array ,the i-th element in the array represents the number of nodes in the i-th layer of the neural network;activationFun is the activation function.</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>myNeuralNet <span class="ot">&lt;-</span> <span class="cf">function</span>(layers,activationFun){</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># choose activation function</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;tanh&#39;</span>){</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    activation<span class="ot">&lt;-</span> tanh</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    activationDerivate <span class="ot">&lt;-</span> tanhDerivate</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;sigmoid&#39;</span>){</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> sigmoidFun</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    activationDerivate <span class="ot">&lt;-</span> sigmoidDerivate</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;relu&#39;</span>){</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> reluFun</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    activationDerivate <span class="ot">&lt;-</span> reluDerivate</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> {</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">&#39;activation is not support,please choose tanh,relu or sigmoid&#39;</span>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  initialWeights <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">length</span>(initialWeights) <span class="ot">&lt;-</span> <span class="fu">length</span>(layers)<span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(layers)<span class="sc">-</span><span class="dv">2</span>)) {</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    rows <span class="ot">&lt;-</span> layers[i]<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    cols <span class="ot">&lt;-</span> layers[i<span class="sc">+</span><span class="dv">1</span>]<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    initialWeights[[i]]<span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> rows,<span class="at">ncol =</span> cols,<span class="fu">rnorm</span>(rows<span class="sc">*</span>cols))  <span class="co"># Initialize Network  Weights</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>  lastRow <span class="ot">&lt;-</span> layers[<span class="fu">length</span>(initialWeights)]<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  lastCol <span class="ot">&lt;-</span> layers[<span class="fu">length</span>(initialWeights)<span class="sc">+</span><span class="dv">1</span>]</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  initialWeights[[<span class="fu">length</span>(initialWeights)]] <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> lastRow,<span class="at">ncol =</span> lastCol,<span class="fu">rnorm</span>(lastCol<span class="sc">*</span>lastRow))</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(initialWeights) </span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>training</em> is as follows:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#x is the training set; y is label;epochs indicate how many times to run the data.</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>training <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y,learningRate,initialWeights,activationFun,<span class="at">epochs=</span><span class="dv">100</span>){</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;tanh&#39;</span>){</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    activation<span class="ot">&lt;-</span> tanh</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    activationDerivate <span class="ot">&lt;-</span> tanhDerivate</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;sigmoid&#39;</span>){</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> sigmoidFun</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    activationDerivate <span class="ot">&lt;-</span> sigmoidDerivate</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;relu&#39;</span>){</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> reluFun</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    activationDerivate <span class="ot">&lt;-</span> reluDerivate</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> {</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">&#39;activation is not support,please choose tanh,relu or sigmoid&#39;</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  initialweights <span class="ot">&lt;-</span> initialWeights</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">cbind</span>(<span class="dv">1</span>,x))</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>epochs) {</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    samples <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x[,<span class="dv">1</span>]),<span class="dv">1</span>) <span class="co">#Randomly select a sample for training</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>    compWeights <span class="ot">&lt;-</span> <span class="fu">list</span>(x[samples,])</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">length</span>(compWeights) <span class="ot">&lt;-</span><span class="fu">length</span>(initialweights)</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Calculate Predicted Value</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(initialweights)) {</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>      values <span class="ot">&lt;-</span> compWeights[[j]] <span class="sc">%*%</span> initialweights[[j]]</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>      compWeights[[j<span class="sc">+</span><span class="dv">1</span>]]<span class="ot">&lt;-</span><span class="fu">activation</span>(values)</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    error <span class="ot">&lt;-</span> y[samples,] <span class="sc">-</span> compWeights[[<span class="fu">length</span>(compWeights)]] <span class="co">#Calculate the error </span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>    gradient <span class="ot">&lt;-</span> <span class="fu">list</span>(error<span class="sc">*</span> <span class="fu">activationDerivate</span>(compWeights[[<span class="fu">length</span>(compWeights)]])) <span class="co">#Calculate the  gradient </span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (k <span class="cf">in</span> (<span class="fu">length</span>(compWeights)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">:</span><span class="dv">2</span>) {</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">length</span>(gradient) <span class="ot">&lt;-</span> <span class="fu">length</span>(gradient) <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>      gradient[[<span class="fu">length</span>(gradient)]] <span class="ot">&lt;-</span> gradient[[<span class="fu">length</span>(gradient)<span class="sc">-</span><span class="dv">1</span>]]<span class="sc">%*%</span><span class="fu">t</span>(initialweights[[k]])<span class="sc">*</span><span class="fu">activationDerivate</span>(compWeights[[k]])</span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>    gradientReverse <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">length</span>(gradientReverse) <span class="ot">&lt;-</span> <span class="fu">length</span>(gradient)</span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (m <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(gradient)) {</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>      gradientReverse[[m]] <span class="ot">&lt;-</span> gradient[[(<span class="fu">length</span>(gradient))<span class="sc">-</span>m<span class="sc">+</span><span class="dv">1</span>]]</span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update  network weights</span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(initialweights)) {</span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>      layerWeight <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(compWeights[[s]])</span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>      gradient <span class="ot">&lt;-</span> gradientReverse[[s]]</span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>      initialweights[[s]]<span class="ot">&lt;-</span> initialweights[[s]] <span class="sc">+</span> learningRate<span class="sc">*</span>(layerWeight<span class="sc">%*%</span>gradient)</span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(initialweights)</span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(initialweights)</span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The source R code for <em>prediction</em> is as follows</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># x is the sample ;fitWeights is the trained weight.</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">&lt;-</span> <span class="cf">function</span>(x,fitWeights,activationFun){</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;tanh&#39;</span>){</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    activation<span class="ot">&lt;-</span> tanh</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;sigmoid&#39;</span>){</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> sigmoidFun</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;relu&#39;</span>){</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> reluFun</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> {</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">&#39;activation is not support,please choose tanh,relu or sigmoid&#39;</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(fitWeights)) {</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    dotValues <span class="ot">&lt;-</span> x<span class="sc">%*%</span>fitWeights[[i]]</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">activation</span>(dotValues)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>predictionMat <span class="ot">&lt;-</span> <span class="cf">function</span>(x,fitWeights,activationFun){</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;tanh&#39;</span>){</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    activation<span class="ot">&lt;-</span> tanh</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;sigmoid&#39;</span>){</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> sigmoidFun</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span>(activationFun <span class="sc">==</span> <span class="st">&#39;relu&#39;</span>){</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    activation <span class="ot">&lt;-</span> reluFun</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> {</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="st">&#39;activation is not support,please choose tanh,relu or sigmoid&#39;</span>)</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>  newX <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="dv">1</span>,x)</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>  predictValues <span class="ot">&lt;-</span> <span class="fu">apply</span>(newX, <span class="dv">1</span>,<span class="cf">function</span>(x)<span class="fu">prediction</span>(x,fitWeights,activationFun))</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(predictValues)</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Prepare training set and test set:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use the data Boston from MASS to make a presentation.</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MASS)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:DAAG&#39;:
+## 
+##     hills</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>samplesSelect<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(Boston[,<span class="dv">1</span>])),<span class="fu">length</span>(Boston[,<span class="dv">1</span>])<span class="sc">*</span><span class="fl">0.7</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Divide training set and test set</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>trainData<span class="ot">&lt;-</span>Boston[samplesSelect,]</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>testData<span class="ot">&lt;-</span>Boston[<span class="sc">-</span>samplesSelect,]</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># medv is the label,  the house price to be predicted</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>trainX<span class="ot">&lt;-</span>trainData[<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(Boston)<span class="sc">==</span><span class="st">&quot;medv&quot;</span>)]</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>trainY<span class="ot">&lt;-</span>trainData[<span class="fu">which</span>(<span class="fu">colnames</span>(Boston)<span class="sc">==</span><span class="st">&quot;medv&quot;</span>)]</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>testX<span class="ot">&lt;-</span>testData[<span class="sc">-</span><span class="fu">which</span>(<span class="fu">colnames</span>(Boston)<span class="sc">==</span><span class="st">&quot;medv&quot;</span>)]</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>testY<span class="ot">&lt;-</span>testData[<span class="fu">which</span>(<span class="fu">colnames</span>(Boston)<span class="sc">==</span><span class="st">&quot;medv&quot;</span>)]</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Normalize the data</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>trainX<span class="ot">&lt;-</span><span class="fu">apply</span>(trainX,<span class="dv">2</span>,<span class="cf">function</span>(x)<span class="fu">scale</span>(x,<span class="at">center=</span>T,<span class="at">scale=</span>T))</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>trainY<span class="ot">&lt;-</span><span class="fu">scale</span>(trainY,<span class="at">center=</span>T,<span class="at">scale=</span>T)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>testX<span class="ot">&lt;-</span><span class="fu">apply</span>(testX,<span class="dv">2</span>,<span class="cf">function</span>(x)<span class="fu">scale</span>(x,<span class="at">center=</span>T,<span class="at">scale=</span>T))</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>testY<span class="ot">&lt;-</span><span class="fu">scale</span>(testY,<span class="at">center=</span>T,<span class="at">scale=</span>T)</span></code></pre></div>
+<p>Construct neural network , then train on the training set . Finally,
+predict on the test set.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>initialWeights <span class="ot">&lt;-</span> <span class="fu">myNeuralNet</span>(<span class="fu">c</span>(<span class="dv">13</span>,<span class="dv">6</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>),<span class="st">&#39;tanh&#39;</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>fitWeights<span class="ot">&lt;-</span><span class="fu">training</span>(trainX,trainY,<span class="fl">0.001</span>,initialWeights,<span class="st">&#39;tanh&#39;</span>,<span class="dv">20000</span>)</span></code></pre></div>
+<pre><code>## [[1]]
+##             [,1]        [,2]       [,3]       [,4]       [,5]         [,6]
+##  [1,]  1.6160466 -1.07965812  0.2079035 -0.3699859 -0.1066376 -0.097850887
+##  [2,] -1.3944720  1.51348073 -1.2222759 -0.8507683  1.5685501  0.172469191
+##  [3,]  0.4601321 -0.22259663  0.2099501 -1.0385185 -1.4342316  0.005233153
+##  [4,] -0.2687114  1.24441736  0.8758736 -1.3537512  1.3258650  0.173694368
+##  [5,]  0.6995438 -0.02534170 -0.2457377  0.2368249 -0.2004918  0.867019440
+##  [6,] -1.0173783  1.09632393 -2.4084994  0.4878016 -0.7271704 -1.560665238
+##  [7,]  1.7598168  1.62094889  0.8219611  1.1218233 -0.4801057  0.863986734
+##  [8,] -0.6015066 -0.25509936 -1.2821501 -0.5423099 -0.6131108 -1.414305974
+##  [9,] -0.1808561  1.26094189 -0.5058755  0.4996336 -1.2798569  0.894157831
+## [10,] -0.6549315 -1.59159685 -0.1570307 -0.9610036  1.4222484  0.302006725
+## [11,]  1.7993823 -0.68874957  0.9263556  1.0644686 -1.3563434  1.102366016
+## [12,] -1.2543347  0.06755849 -2.4967460  0.2925547 -0.2347780 -1.137215492
+## [13,] -0.6655197  0.65311242  0.1603977  1.1135070 -0.7750071 -0.229620880
+## [14,] -2.1431591 -1.88576600  0.1108253 -0.3288466 -0.6330529 -1.350087074
+##              [,7]
+##  [1,]  1.04498833
+##  [2,] -1.92112187
+##  [3,]  1.07287819
+##  [4,] -0.81130370
+##  [5,]  0.79611124
+##  [6,] -0.01127769
+##  [7,]  0.18189661
+##  [8,] -1.12094094
+##  [9,] -3.65456728
+## [10,] -0.50983077
+## [11,] -0.72522443
+## [12,]  0.93625016
+## [13,]  1.82671487
+## [14,] -0.72609574
+## 
+## [[2]]
+##            [,1]         [,2]       [,3]        [,4]
+## [1,] -2.2963013  0.219520777 -0.3550889 -0.06791507
+## [2,] -1.6392619 -0.435395608 -0.2546836 -1.12061169
+## [3,] -0.2682318 -1.927327036  0.8550860 -1.35463637
+## [4,]  0.2830478 -0.396147662 -0.5453180  0.50805784
+## [5,]  0.6239439 -1.268224377  0.5157183  0.30882404
+## [6,] -1.0817342 -1.313115950  0.2430430  0.58742722
+## [7,] -0.4088870 -0.009118084 -0.7578876  1.13935684
+## 
+## [[3]]
+##            [,1]        [,2]       [,3]
+## [1,] -1.1649385  1.56034064 -0.5949028
+## [2,]  1.0942934  0.46810044 -0.7653550
+## [3,]  0.3686375  1.43412899 -0.7862614
+## [4,]  0.4129010 -0.04993583 -0.8269094
+## 
+## [[4]]
+##            [,1]
+## [1,] -0.3802784
+## [2,] -0.5381941
+## [3,]  0.3184149</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>predictValues<span class="ot">&lt;-</span><span class="fu">predictionMat</span>(testX,initialWeights,<span class="st">&#39;tanh&#39;</span>)</span></code></pre></div>
+<pre><code>##   [1] -0.040029652 -0.056313598 -0.055521369 -0.060163527  0.012578244
+##   [6]  0.092246620  0.073611818 -0.011719908  0.103087880  0.071678805
+##  [11] -0.016367339 -0.017427052 -0.047882369 -0.056513389 -0.014907392
+##  [16] -0.048924898 -0.050364956 -0.054743644 -0.030688042 -0.012729302
+##  [21] -0.054495352 -0.053287796 -0.048339136 -0.037514803 -0.035789600
+##  [26]  0.038502432 -0.020393163  0.001279476 -0.055374418  0.013414052
+##  [31]  0.103389744  0.077591603  0.088085674  0.080620810  0.069893998
+##  [36]  0.048988140  0.058679802  0.066080802  0.056989708  0.071697263
+##  [41]  0.062035323  0.060585810  0.019267207  0.007454834  0.054084163
+##  [46]  0.066921106  0.064323165  0.047403229  0.038765141  0.034988326
+##  [51] -0.066763705 -0.068524444 -0.055278654 -0.095145592 -0.106172106
+##  [56]  0.093894548 -0.031228200 -0.052502259 -0.054207353 -0.054341400
+##  [61] -0.041777933 -0.019582651  0.066728784  0.054480395  0.065158519
+##  [66]  0.057168333  0.083235257  0.067552840  0.040074793  0.047485493
+##  [71]  0.016632168  0.027411949  0.009371859 -0.054155263 -0.049340349
+##  [76] -0.054075167 -0.048710741 -0.047712244 -0.048299984 -0.053305456
+##  [81]  0.052163219  0.063346789 -0.045130757 -0.050033055 -0.028381774
+##  [86] -0.025338119 -0.006395290 -0.024614457  0.030038027 -0.029182293
+##  [91] -0.054330868 -0.051838305 -0.054158809 -0.064876350 -0.063898943
+##  [96] -0.051462869 -0.031923805  0.071074554 -0.014593523  0.096240027
+## [101]  0.046688877  0.023985804  0.047682276 -0.039794022 -0.054225138
+## [106]  0.049192813 -0.048265421 -0.042465079 -0.054884395 -0.053990110
+## [111]  0.052711731  0.050390738  0.055986220  0.050753443  0.050278540
+## [116]  0.054977179  0.054961754  0.053799204  0.054945469  0.053973045
+## [121]  0.052593422  0.054113411  0.036410311  0.054921546  0.029991561
+## [126]  0.054858184  0.033772622  0.055049063  0.054942390  0.054728596
+## [131]  0.054758953  0.054575324  0.024784106  0.036807740  0.040948605
+## [136]  0.054967049  0.053982138  0.051805163  0.052763762  0.052094972
+## [141]  0.053915681  0.046474975  0.054909406  0.054963320  0.054871913
+## [146] -0.070735019 -0.085350696  0.017908444  0.069892636  0.092081777
+## [151]  0.057423847  0.050568777</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>trainYOrig<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(trainData[<span class="fu">which</span>(<span class="fu">colnames</span>(Boston)<span class="sc">==</span><span class="st">&quot;medv&quot;</span>)])</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>testYOrig<span class="ot">&lt;-</span><span class="fu">as.matrix</span>(testData[<span class="fu">which</span>(<span class="fu">colnames</span>(Boston)<span class="sc">==</span><span class="st">&quot;medv&quot;</span>)])</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>predictValuesMyNet<span class="ot">&lt;-</span>predictValues<span class="sc">*</span><span class="fu">sd</span>(trainYOrig)<span class="sc">+</span><span class="fu">mean</span>(trainYOrig)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>mae<span class="ot">&lt;-</span><span class="fu">mean</span>(<span class="fu">abs</span>(testYOrig<span class="sc">-</span>predictValuesMyNet))</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>mae</span></code></pre></div>
+<pre><code>## [1] 7.076818</code></pre>
+<p>using neuralnet package to construct neural network:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use neuralnet package as a control</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(neuralnet)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;neuralnet&#39;</code></pre>
+<pre><code>## The following object is masked _by_ &#39;.GlobalEnv&#39;:
+## 
+##     prediction</code></pre>
+<pre><code>## The following object is masked from &#39;package:StatComp22092&#39;:
+## 
+##     prediction</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>network <span class="ot">&lt;-</span> <span class="fu">neuralnet</span>(medv<span class="sc">~</span>crim<span class="sc">+</span>zn<span class="sc">+</span>indus<span class="sc">+</span>chas<span class="sc">+</span>nox<span class="sc">+</span>rm<span class="sc">+</span>age<span class="sc">+</span>dis<span class="sc">+</span>rad<span class="sc">+</span>tax<span class="sc">+</span>ptratio<span class="sc">+</span>black<span class="sc">+</span>lstat,trainData,<span class="at">hidden=</span><span class="dv">4</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>network<span class="sc">$</span>weights</span></code></pre></div>
+<pre><code>## [[1]]
+## [[1]][[1]]
+##             [,1]         [,2]        [,3]       [,4]
+##  [1,] -0.4817809 -0.816737581 -0.69433020  1.5004217
+##  [2,] -1.0814458  0.451064490 -0.01231638  0.5091489
+##  [3,] -1.3261561 -0.021362866  0.66669624  1.2587275
+##  [4,]  0.2663908 -0.001005912  1.96953178 -0.5446334
+##  [5,] -1.4011782 -1.269894620  0.32385845  0.5265072
+##  [6,] -1.0648045  1.603589528  0.39463423 -0.6275854
+##  [7,] -1.5436096  1.008601049 -0.28783483 -0.3268486
+##  [8,] -2.0170589 -1.664588713  1.12013147  1.3947571
+##  [9,] -0.8362933  1.119684423 -0.76988259 -1.5065850
+## [10,] -2.3565964  1.107886542  0.12172858  1.2495378
+## [11,] -1.0961711  0.338222156  0.39110764  1.0717016
+## [12,] -0.6005224 -0.241495161  0.80384834  0.5635547
+## [13,] -1.3310753  1.145276485 -0.06760761  0.1118576
+## [14,] -1.8457375  1.068670592  0.02586424  0.9696980
+## 
+## [[1]][[2]]
+##            [,1]
+## [1,]  5.6868280
+## [2,] -0.4932373
+## [3,]  4.6788365
+## [4,]  5.8397333
+## [5,]  6.1033555</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>predictionNeuralnet<span class="ot">&lt;-</span><span class="fu">compute</span>(network,testX)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">data.frame</span>(testData<span class="sc">$</span>medv,predictValuesMyNet,predictionNeuralnet<span class="sc">$</span>net.result),<span class="dv">40</span>)</span></code></pre></div>
+<pre><code>##    testData.medv predictValuesMyNet predictionNeuralnet.net.result
+## 1           24.0           21.94906                       6.923153
+## 2           21.6           21.80273                       6.462458
+## 3           36.2           21.80985                       7.658711
+## 4           27.1           21.76814                      11.015358
+## 5           23.1           22.42178                       7.999987
+## 6           19.6           23.13767                      12.452858
+## 7           15.6           22.97022                      13.002639
+## 8           14.8           22.20344                      12.092022
+## 9           14.5           23.23509                      13.098393
+## 10          13.1           22.95285                      13.860416
+## 11          24.7           22.16168                       8.038555
+## 12          26.6           22.15216                       9.320924
+## 13          20.0           21.87849                       7.568920
+## 14          16.6           21.80094                       8.342487
+## 15          14.4           22.17480                      11.799141
+## 16          19.4           21.86913                       6.914734
+## 17          16.0           21.85619                      11.591646
+## 18          22.0           21.81684                       7.996345
+## 19          21.4           22.03300                       7.703616
+## 20          20.8           22.19437                       8.161143
+## 21          24.8           21.81907                       7.643356
+## 22          22.9           21.82992                       7.423099
+## 23          23.9           21.87439                       6.901173
+## 24          26.6           21.97166                       6.379362
+## 25          22.5           21.98716                       7.164392
+## 26          23.6           22.65473                       7.446189
+## 27          22.6           22.12551                       7.473755
+## 28          22.0           22.32025                       7.809857
+## 29          25.0           21.81117                       8.129519
+## 30          28.4           22.42929                       6.490037
+## 31          19.8           23.23780                      14.836774
+## 32          19.4           23.00598                      14.703920
+## 33          18.7           23.10028                      14.485065
+## 34          18.5           23.03320                      12.951545
+## 35          19.2           22.93681                      12.443328
+## 36          20.3           22.74896                      13.058683
+## 37          20.5           22.83604                      14.606632
+## 38          17.3           22.90255                      16.434089
+## 39          21.4           22.82086                      13.724338
+## 40          15.7           22.95302                      16.667840</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

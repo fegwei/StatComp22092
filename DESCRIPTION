@@ -1,0 +1,19 @@
+Package: StatComp22092
+Type: Package
+Title: Compare the performance of four sorting algorithms and provides an interface for construct fully connected neural network
+Version: 1.0
+Date: 2022-11-29
+Author: Wei Feng
+Maintainer: Wei Feng <343024049@qq.com>
+Description: a R package developed to compare the performance of four sorting algorithms:bubble sort algorithm,selection sort algorithm,  insert sort algorithm ,quick sort algorithm ; provides an interface (myNerualNet) to construct a neural network,train  the network and predict.
+License: GPL (>= 2)
+Imports: Rcpp, microbenchmark
+Suggests: knitr, rmarkdown,ggplot2,ggExtra,boot,DAAG,neuralnet,MASS,xtable,bootstrap
+LinkingTo: Rcpp
+RoxygenNote: 7.2.2
+Encoding: UTF-8
+VignetteBuilder: knitr
+URL: https://github.com/fegwei/StatComp22092
+BugReports: https://github.com/fegwei/StatComp22092/issues
+
+
